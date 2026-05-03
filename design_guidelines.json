@@ -1,0 +1,91 @@
+{
+  "theme": "light",
+  "archetype": "Archetype 4 (Swiss & High-Contrast)",
+  "colors": {
+    "primary": "#002FA7",
+    "primary_hover": "#00247D",
+    "background": "#FAFAFA",
+    "surface": "#FFFFFF",
+    "text_main": "#0B1120",
+    "text_muted": "#4B5563",
+    "border": "#E5E7EB",
+    "accent": "#FF3B30",
+    "accent_hover": "#D62828",
+    "industrial_gray": "#1F2937"
+  },
+  "typography": {
+    "font_families": {
+      "headings": "'Cabinet Grotesk', sans-serif",
+      "body": "'IBM Plex Sans', sans-serif",
+      "mono": "'IBM Plex Mono', monospace"
+    },
+    "scale": {
+      "h1": "text-5xl sm:text-6xl tracking-tighter font-black uppercase",
+      "h2": "text-3xl sm:text-4xl tracking-tight font-bold",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed text-gray-700",
+      "small": "text-sm text-gray-500",
+      "overline": "text-xs tracking-[0.2em] uppercase font-bold text-gray-400"
+    }
+  },
+  "spacing": {
+    "section_padding": "py-24 sm:py-32",
+    "container_padding": "px-6 sm:px-12 lg:px-24",
+    "grid_gap": "gap-8 sm:gap-12"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#002FA7] hover:bg-[#00247D] text-white rounded-none px-6 py-3 font-semibold uppercase tracking-wider text-sm transition-colors border border-transparent focus:ring-2 focus:ring-[#002FA7] focus:ring-offset-2",
+      "secondary": "bg-white hover:bg-gray-50 text-[#0B1120] rounded-none px-6 py-3 font-semibold uppercase tracking-wider text-sm transition-colors border border-gray-300 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2",
+      "ghost": "bg-transparent hover:bg-gray-100 text-[#0B1120] rounded-none px-6 py-3 font-semibold uppercase tracking-wider text-sm transition-colors"
+    },
+    "cards": {
+      "marketing": "bg-white border border-gray-200 rounded-none p-8 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300",
+      "dashboard": "bg-white border border-gray-200 rounded-none p-6 shadow-sm",
+      "table_container": "border-collapse border border-gray-200 bg-white"
+    },
+    "inputs": {
+      "default": "border-gray-300 rounded-none bg-white focus:ring-2 focus:ring-[#002FA7] focus:border-transparent text-sm",
+      "label": "text-xs font-bold uppercase tracking-wider text-gray-500 mb-1 block"
+    }
+  },
+  "layout_strategies": {
+    "hero": "Asymmetrical split. Left: massive typographic statement ('ENGINEERS DON\\'T LIKE SURPRISES.') + BOM CTA. Right: bleeding edge technical image or Blueprint aesthetic. Generous negative space.",
+    "product_catalog": "Dense 'Control Room' grid. Table-heavy layouts with fixed headers. Use IBM Plex Mono for grades (e.g., 316L, Duplex 2205). Filters on a collapsible left sidebar.",
+    "services_industries": "The 'Grid Borders' look. Exposed skeleton (border-r, border-b on grid items). No rounded corners.",
+    "footer": "Dark mode flip. bg-[#0B1120] text-white. Massive 'REQUEST BOM QUOTE' CTA text at 8vw. Py-32 spacing."
+  },
+  "images": {
+    "hero_background": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/7894bda8-d9d3-4a63-ac15-fa30e279b065/images/d2077e085c3b808958aaf6008fec472097d33113504c22aceb740cbaebd41da8.png",
+      "description": "Clean modern testing laboratory for steel alloy metallurgy, precise and high-tech."
+    },
+    "industry_offshore": {
+      "url": "https://images.unsplash.com/photo-1727461553668-45322401f863?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwyfHxvaWwlMjByZWZpbmVyeSUyMG9mZnNob3JlfGVufDB8fHx8MTc3Nzc5NjYzNXww&ixlib=rb-4.1.0&q=85",
+      "description": "Oil rig offshore representing the Marine and Oil & Gas industries served."
+    },
+    "quality_inspection": {
+      "url": "https://images.unsplash.com/photo-1764737734436-7eb904d3a4ab?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwyfHxlbmdpbmVlciUyMGJsdWVwcmludCUyMGluc3BlY3Rpb258ZW58MHx8fHwxNzc3Nzk2NjM1fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Engineer hands measuring with calipers and blueprints, for Quality Testing & Inspection page."
+    },
+    "product_pipes": {
+      "url": "https://images.pexels.com/photos/19730402/pexels-photo-19730402.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Close up of complex industrial pipes, representing the product catalog (Carbon/Stainless/Alloys)."
+    }
+  },
+  "motion": {
+    "hover": "Subtle translate-y, hard shadows appearing on hover. No bouncy scaling.",
+    "page_load": "Fade in with slight upward slide (framer-motion).",
+    "scrolling": "Lenis smooth scrolling mandatory for premium heavy industrial feel."
+  },
+  "instructions_to_main_agent": [
+    "Use standard HTML + Tailwind for marketing pages to allow for the 'Technical Grid' exposed skeleton layouts. Do not trap marketing content inside Shadcn Cards.",
+    "For the admin dashboard and product catalog, use Shadcn tables, but style them densely (Control Room archetype). Use IBM Plex Mono for all data/grades.",
+    "Install and use `@phosphor-icons/react` for all icons (e.g., `<Database weight='duotone' />`). It fits the engineering vibe perfectly. Run: `yarn add @phosphor-icons/react`",
+    "Include `data-testid` on all interactive elements (forms, buttons, links).",
+    "Implement the 'Crystal Glass' effect on the top sticky navigation (`backdrop-blur-xl bg-white/80 border-b border-gray-200`).",
+    "Do NOT use 'Inter' for headings. Must use 'Cabinet Grotesk' or 'IBM Plex Sans'. Import them via Google Fonts or standard CDNs in index.css.",
+    "Never center-align large blocks of text. Maintain a strict left-aligned rigid structure for technical authority."
+  ]
+}
