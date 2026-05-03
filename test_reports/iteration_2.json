@@ -1,0 +1,42 @@
+{
+  "summary": "Iteration 2 testing of Quality Metals product-type taxonomy + admin image upload. All 15 backend tests pass (categories, 52 products, schema with subtype/grades[]/sizes/image_url, category filters, featured, static image serving for all 10 cat-<slug>.jpg, auth, upload auth/type/size/success, admin product CRUD with new fields). Frontend: home shows all 10 product-type category cards; Products page renders 52 cards each with /api/uploads/cat-* image src, subtype badge, available-grades chips; category sidebar has 10 entries + 'All'; pipes filter shows 6 cards. Admin login works; product form has Subtype/Sizes/Available Grades fields and ImageUploader (drag-drop area, file input, URL paste fallback). UI test: pasted /api/uploads/cat-pipes.jpg into URL input, saved product, and verified via API that image_url + subtype + grades persisted exactly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Products page grade filter dropdown",
+        "issue": "Several option values in the grade-filter <select> (e.g. 'Carbon', 'Low-Temp', 'Alloy') do not match any substring in product.grades, so selecting them yields 0 cards. Only fully-qualified values like 'Stainless Steel 304 / 304L' would match and even those only via case-insensitive substring on 'SS 304 / 304L'. Filter buckets should be re-mapped to the actual grade strings used in the seed data.",
+        "affected_selectors": ["[data-testid=\"grade-filter\"]"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_qm_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Optional: re-map the Products page grade-filter dropdown options to the exact grade strings used in the database (current 'Carbon', 'Low-Temp', 'Alloy' buckets return 0 matches because no product.grades string contains those tokens).",
+    "Optional cleanup: SEED_PRODUCTS in /app/backend/server.py still references pexels image URLs, but DB has been correctly seeded with /api/uploads/cat-<slug>.jpg URLs. Future re-seeds (after a wipe) should be updated to set image_url = '/api/uploads/cat-<slug>.jpg' for consistency."
+  ],
+  "critical_code_review_comments": [
+    "server.py is ~810 lines and mixes config, models, routes, seed data, and startup hooks; consider splitting into routes/, models/, seed/ modules.",
+    "GRADES_FAS_ALL is correctly used; SEED_PRODUCTS' image_url values diverge from what was actually seeded into the DB — a re-seed (after manual DB wipe) would replace correct cat-<slug>.jpg URLs with pexels URLs and break the 'image_url starts with /api/uploads/cat-' contract.",
+    "Upload endpoint enforces 8MB cap by reading entire file into memory before checking size; for very large uploads consider streaming or using request.headers['content-length'] for early rejection.",
+    "Auth uses single shared JWT via cookie + bearer header — fine, but cookie has secure=False (acceptable for current preview env over HTTPS through proxy, but should be True in production)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_qm_api.py"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "95%"},
+  "test_credentials": "admin@qualitymetalsltd.com / QualityMetals2025 (from /app/memory/test_credentials.md)",
+  "seed_data_creation": "No new seed data required. Test artifacts (TEST_UI_Product, TEST_New Pipe Product) are auto-cleaned within tests.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend test suite at /app/backend/tests/test_qm_api.py covers all iteration-2 features (15 tests, all green). To run: REACT_APP_BACKEND_URL=<url> pytest /app/backend/tests/test_qm_api.py -v. UI flows verified via Playwright: home category grid (10 cards), products page (52 cards with /api/uploads/cat-* images, subtype badges, grades chips), admin login, admin product form with ImageUploader URL-paste flow. Only minor finding: Products page grade-filter dropdown buckets don't map to actual DB grade strings (Carbon/Low-Temp/Alloy → 0 results). Brute-force lockout from iteration 1 still in place (X-Forwarded-For path; verified login works with Bearer token).",
+  "rca of the issue": "Grade filter mismatch RCA: Products.jsx filters via (p.grades||[]).join(' ').toLowerCase().includes(g.toLowerCase()). The dropdown options include short labels ('Carbon', 'Low-Temp', 'Alloy') that never appear as substrings in actual seeded grade strings ('ASTM A106 Gr B', 'ASTM A333 Gr 6', 'API 5L X42-X70', etc.). Mitigation: either (a) change option values to actual grade tokens (e.g., 'A106', 'A333', 'X42'), or (b) build the dropdown options dynamically from the unique union of all product.grades strings."
+}

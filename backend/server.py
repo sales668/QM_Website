@@ -12,7 +12,8 @@ import jwt
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response, UploadFile, File
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
@@ -26,6 +27,11 @@ JWT_ALGO = "HS256"
 ACCESS_TOKEN_MIN = 60 * 24  # 24h
 ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@qualitymetalsltd.com")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "QualityMetals2025")
+
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True, parents=True)
+ALLOWED_IMG_EXT = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+MAX_UPLOAD_BYTES = 8 * 1024 * 1024  # 8 MB
 
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
@@ -307,6 +313,23 @@ async def delete_product(product_id: str, admin=Depends(get_current_admin)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Product not found")
     return {"ok": True}
+
+
+@api.post("/admin/upload-image")
+async def upload_image(file: UploadFile = File(...), admin=Depends(get_current_admin)):
+    """Upload an image (any common format), save to disk, return its public URL."""
+    ext = ("." + file.filename.rsplit(".", 1)[-1].lower()) if "." in (file.filename or "") else ""
+    if ext not in ALLOWED_IMG_EXT:
+        raise HTTPException(status_code=400, detail=f"Unsupported file type. Allowed: {', '.join(sorted(ALLOWED_IMG_EXT))}")
+    contents = await file.read()
+    if len(contents) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail=f"File too large. Max {MAX_UPLOAD_BYTES // (1024 * 1024)} MB.")
+    if not contents:
+        raise HTTPException(status_code=400, detail="Empty file")
+    fname = f"{uuid.uuid4().hex}{ext}"
+    fpath = UPLOAD_DIR / fname
+    fpath.write_bytes(contents)
+    return {"url": f"/api/uploads/{fname}", "filename": fname, "size": len(contents)}
 
 
 @api.get("/inquiries", response_model=List[Inquiry])
@@ -773,6 +796,8 @@ async def on_shutdown():
 
 # Mount router + middleware
 app.include_router(api)
+# Static files for uploaded images — accessible at /api/uploads/<filename>
+app.mount("/api/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Plus, PencilSimple, Trash, SignOut, ChartBar, Package, EnvelopeSimple, House } from "@phosphor-icons/react";
+import { Plus, PencilSimple, Trash, SignOut, ChartBar, Package, EnvelopeSimple, House, UploadSimple, X } from "@phosphor-icons/react";
 import { useAuth } from "../lib/AuthContext";
-import { api, formatApiErrorDetail } from "../lib/api";
+import { api, formatApiErrorDetail, API_BASE } from "../lib/api";
 import { toast } from "sonner";
 
 export default function AdminDashboard() {
@@ -215,8 +215,14 @@ function ProductsAdmin() {
           <Inp label="Standards (comma-sep)" v={editing.standards} onChange={(v) => setEditing({ ...editing, standards: v })} />
           <Inp label="Forms (comma-sep)" v={editing.forms} onChange={(v) => setEditing({ ...editing, forms: v })} />
           <Inp label="Applications (comma-sep)" v={editing.applications} onChange={(v) => setEditing({ ...editing, applications: v })} full />
-          <Inp label="Image URL (paste any public image URL)" v={editing.image_url} onChange={(v) => setEditing({ ...editing, image_url: v })} full />
           <Inp label="Description" v={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} full textarea />
+          <div className="sm:col-span-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2 block font-mono-spec">Product Image</label>
+            <ImageUploader
+              value={editing.image_url}
+              onChange={(v) => setEditing({ ...editing, image_url: v })}
+            />
+          </div>
           <Inp label="Sort Order" type="number" v={editing.sort_order} onChange={(v) => setEditing({ ...editing, sort_order: v })} />
           <label className="flex items-center gap-3 mt-7 text-sm">
             <input type="checkbox" checked={!!editing.featured} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} data-testid="admin-product-featured" />
@@ -280,6 +286,112 @@ function Inp({ label, v, onChange, type = "text", full, textarea, required }) {
         <input type={type} value={v} onChange={(e) => onChange(e.target.value)} required={required}
           className="w-full border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#002FA7] rounded-none" />
       )}
+    </div>
+  );
+}
+
+function ImageUploader({ value, onChange }) {
+  const fileInput = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  function resolveSrc(v) {
+    if (!v) return "";
+    if (v.startsWith("http://") || v.startsWith("https://") || v.startsWith("data:")) return v;
+    if (v.startsWith("/api/")) return `${process.env.REACT_APP_BACKEND_URL}${v}`;
+    return v;
+  }
+
+  async function uploadFile(file) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please pick an image file.");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("File too large. Max 8 MB.");
+      return;
+    }
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const { data } = await api.post("/admin/upload-image", fd, { headers: { "Content-Type": "multipart/form-data" } });
+      onChange(data.url);
+      toast.success("Image uploaded.");
+    } catch (e) {
+      toast.error(formatApiErrorDetail(e.response?.data?.detail) || "Upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadFile(file);
+  }
+
+  return (
+    <div data-testid="image-uploader">
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={onDrop}
+        onClick={() => fileInput.current?.click()}
+        className={`relative border-2 border-dashed cursor-pointer transition-colors ${dragging ? "border-[#002FA7] bg-blue-50" : "border-gray-300 bg-[#FAFAFA] hover:bg-gray-50"}`}
+        style={{ minHeight: 160 }}
+      >
+        {value ? (
+          <div className="flex items-center gap-4 p-4">
+            <img
+              src={resolveSrc(value)}
+              alt="Preview"
+              className="w-32 h-24 object-cover border border-gray-200 bg-white"
+              onError={(e) => { e.currentTarget.style.opacity = "0.3"; }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="qm-tick text-gray-500 mb-1">Image attached</div>
+              <div className="font-mono-spec text-xs text-gray-700 truncate">{value}</div>
+              <div className="mt-2 flex gap-3">
+                <button type="button" onClick={(e) => { e.stopPropagation(); fileInput.current?.click(); }}
+                  className="text-[11px] font-bold uppercase tracking-widest text-[#002FA7] hover:underline inline-flex items-center gap-1">
+                  <UploadSimple size={12} weight="bold" /> Replace
+                </button>
+                <button type="button" onClick={(e) => { e.stopPropagation(); onChange(""); }}
+                  className="text-[11px] font-bold uppercase tracking-widest text-[#FF3B30] hover:underline inline-flex items-center gap-1">
+                  <X size={12} weight="bold" /> Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center text-center p-6 h-full" style={{ minHeight: 160 }}>
+            <UploadSimple size={28} weight="duotone" className="text-[#002FA7]" />
+            <div className="font-display font-bold uppercase tracking-tight mt-2 text-[#0B1120]">
+              {uploading ? "Uploading…" : "Drop image here or click to upload"}
+            </div>
+            <div className="qm-tick text-gray-500 mt-1">JPG · PNG · WEBP · max 8 MB</div>
+          </div>
+        )}
+      </div>
+      <input
+        ref={fileInput}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => uploadFile(e.target.files?.[0])}
+        data-testid="image-file-input"
+      />
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="…or paste any public image URL here"
+        className="w-full mt-3 border border-gray-300 bg-white px-3 py-2 text-sm font-mono-spec focus:outline-none focus:ring-2 focus:ring-[#002FA7] rounded-none"
+        data-testid="image-url-input"
+      />
     </div>
   );
 }

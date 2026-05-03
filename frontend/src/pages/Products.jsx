@@ -159,15 +159,18 @@ export default function Products() {
 function ProductCard({ product }) {
   const grades = product.grades || [];
   const standards = product.standards || [];
+  const imgSrc = product.image_url
+    ? (product.image_url.startsWith("/api/") ? `${process.env.REACT_APP_BACKEND_URL}${product.image_url}` : product.image_url)
+    : "";
   return (
     <div
       className="group flex flex-col bg-white border border-gray-200 hover:border-[#002FA7] transition-colors"
       data-testid={`product-card-${product.id}`}
     >
       <div className="aspect-[4/3] bg-[#0B1120] overflow-hidden relative">
-        {product.image_url ? (
+        {imgSrc ? (
           <img
-            src={product.image_url}
+            src={imgSrc}
             alt={product.name}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
