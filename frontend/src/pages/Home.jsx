@@ -59,18 +59,18 @@ export default function Home() {
                 </Link>
               </div>
 
-              <dl className="mt-16 grid grid-cols-3 max-w-lg border-t border-gray-200">
+              <dl className="mt-16 grid grid-cols-3 max-w-2xl border-t border-gray-200">
                 <div className="border-r border-gray-200 py-5">
                   <dt className="qm-tick">Materials</dt>
-                  <dd className="font-display text-3xl font-black mt-1">7+</dd>
+                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">CS · SS · DSS<br/>Ni · Ti · Fasteners</dd>
                 </div>
                 <div className="border-r border-gray-200 py-5 pl-5">
                   <dt className="qm-tick">Standards</dt>
-                  <dd className="font-display text-3xl font-black mt-1">7</dd>
+                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">ASTM · ASME · EN<br/>DIN · AS-NZ · ISO</dd>
                 </div>
                 <div className="py-5 pl-5">
                   <dt className="qm-tick">Sourcing</dt>
-                  <dd className="font-display text-3xl font-black mt-1">3</dd>
+                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">Worldwide<br/>Approved Mills</dd>
                 </div>
               </dl>
             </div>
