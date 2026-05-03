@@ -403,32 +403,28 @@ GRADES_FAS_ALL = [
     "Alloy 20", "Titanium Gr 2 / Gr 5",
 ]
 
-# Image URLs — using one verified-working industrial photo for all products as a safe baseline.
+# Image URLs — locally-served generated category images (see generate_category_images.py).
 # Admin can later upload product-specific photos via the dashboard.
-_PIPES_IMG = "https://images.pexels.com/photos/19730402/pexels-photo-19730402.jpeg?auto=compress&cs=tinysrgb&w=900"
-_BARS_IMG  = "https://images.pexels.com/photos/2244746/pexels-photo-2244746.jpeg?auto=compress&cs=tinysrgb&w=900"
-_SECTIONS_IMG = "https://images.pexels.com/photos/2117937/pexels-photo-2117937.jpeg?auto=compress&cs=tinysrgb&w=900"
-
 IMG = {
-    "pipes_stack": _PIPES_IMG,
-    "pipes_smls":  _PIPES_IMG,
-    "pipes_3lpp":  _PIPES_IMG,
-    "pipes_fbe":   _PIPES_IMG,
-    "bw_fittings": _PIPES_IMG,
-    "elbow":       _PIPES_IMG,
-    "tee":         _PIPES_IMG,
-    "forged_fit":  _PIPES_IMG,
-    "flanges":     _PIPES_IMG,
-    "flange_face": _PIPES_IMG,
-    "forgings":    _PIPES_IMG,
-    "bars_round":  _PIPES_IMG,
-    "sections":    _PIPES_IMG,
-    "h_beams":     _PIPES_IMG,
-    "fasteners":   _PIPES_IMG,
-    "stud_bolts":  _PIPES_IMG,
-    "hex_bolts":   _PIPES_IMG,
-    "valves":      _PIPES_IMG,
-    "spools":      _PIPES_IMG,
+    "pipes_stack": "/api/uploads/cat-pipes.jpg",
+    "pipes_smls":  "/api/uploads/cat-pipes.jpg",
+    "pipes_3lpp":  "/api/uploads/cat-pipes.jpg",
+    "pipes_fbe":   "/api/uploads/cat-pipes.jpg",
+    "bw_fittings": "/api/uploads/cat-bw-fittings.jpg",
+    "elbow":       "/api/uploads/cat-bw-fittings.jpg",
+    "tee":         "/api/uploads/cat-bw-fittings.jpg",
+    "forged_fit":  "/api/uploads/cat-forged-fittings.jpg",
+    "flanges":     "/api/uploads/cat-flanges.jpg",
+    "flange_face": "/api/uploads/cat-flanges.jpg",
+    "forgings":    "/api/uploads/cat-forgings.jpg",
+    "bars_round":  "/api/uploads/cat-bars.jpg",
+    "sections":    "/api/uploads/cat-sections.jpg",
+    "h_beams":     "/api/uploads/cat-sections.jpg",
+    "fasteners":   "/api/uploads/cat-fasteners.jpg",
+    "stud_bolts":  "/api/uploads/cat-fasteners.jpg",
+    "hex_bolts":   "/api/uploads/cat-fasteners.jpg",
+    "valves":      "/api/uploads/cat-valves.jpg",
+    "spools":      "/api/uploads/cat-spools.jpg",
 }
 
 SEED_PRODUCTS = [

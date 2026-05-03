@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowUpRight, MagnifyingGlass } from "@phosphor-icons/react";
 import { api } from "../lib/api";
-import { CATEGORIES, ALL_GRADES } from "../lib/staticData";
+import { CATEGORIES } from "../lib/staticData";
 
 export default function Products() {
   const { categorySlug } = useParams();
@@ -37,13 +37,17 @@ export default function Products() {
       );
     }
     if (activeGrade) {
-      const g = activeGrade.toLowerCase();
-      list = list.filter((p) =>
-        (p.grades || []).join(" ").toLowerCase().includes(g)
-      );
+      list = list.filter((p) => (p.grades || []).includes(activeGrade));
     }
     return list;
   }, [products, search, activeGrade]);
+
+  // Build the grade dropdown from the actual grades present in the loaded products
+  const availableGrades = useMemo(() => {
+    const set = new Set();
+    products.forEach((p) => (p.grades || []).forEach((g) => set.add(g)));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [products]);
 
   return (
     <div data-testid="products-page" className="bg-white">
@@ -103,10 +107,8 @@ export default function Products() {
               className="w-full border border-gray-300 bg-white px-3 py-2 text-sm rounded-none focus:outline-none focus:ring-2 focus:ring-[#002FA7]"
             >
               <option value="">All grades</option>
-              {ALL_GRADES.map((g) => (
-                <option key={g} value={g.split(" ")[0] === "Stainless" ? g.split("(")[1]?.replace(")", "") || g : g.split(" ")[0]}>
-                  {g}
-                </option>
+              {availableGrades.map((g) => (
+                <option key={g} value={g}>{g}</option>
               ))}
             </select>
 
