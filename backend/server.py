@@ -165,10 +165,21 @@ class InquiryUpdate(BaseModel):
 
 
 # ---------- Auth Routes ----------
+def _get_client_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for", "")
+    if xff:
+        # first hop is the original client
+        return xff.split(",")[0].strip()
+    real_ip = request.headers.get("x-real-ip", "")
+    if real_ip:
+        return real_ip.strip()
+    return request.client.host if request.client else "unknown"
+
+
 @api.post("/auth/login", response_model=AuthOut)
 async def login(payload: LoginIn, request: Request, response: Response):
     email = payload.email.lower().strip()
-    ip = request.client.host if request.client else "unknown"
+    ip = _get_client_ip(request)
     identifier = f"{ip}:{email}"
 
     # brute-force check
