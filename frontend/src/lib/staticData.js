@@ -1,13 +1,38 @@
 import React from "react";
 
+// PRODUCT CATEGORIES = product types (what we sell), NOT material grades
 export const CATEGORIES = [
-  { slug: "carbon-steel", name: "Carbon Steel", code: "CS" },
-  { slug: "mild-steel", name: "Mild Steel", code: "MS" },
-  { slug: "stainless-steel", name: "Stainless Steel", code: "SS" },
-  { slug: "duplex", name: "Duplex & Super Duplex", code: "DSS" },
-  { slug: "high-nickel-alloys", name: "High Nickel Alloys", code: "Ni" },
-  { slug: "titanium", name: "Titanium Alloys", code: "Ti" },
-  { slug: "fasteners", name: "Fasteners", code: "FAS" },
+  { slug: "pipes", name: "Pipes", code: "PI", desc: "Seamless, ERW/HFW, HSAW + 3LPP / FBE / DFBE coatings" },
+  { slug: "bw-fittings", name: "BW Fittings", code: "BW", desc: "Elbows, tees, reducers, caps, stub ends, crosses" },
+  { slug: "forged-fittings", name: "Forged Fittings", code: "FF", desc: "Socket-weld & threaded — elbow, tee, coupling, union" },
+  { slug: "flanges", name: "Flanges", code: "FL", desc: "WN, SO, BL, SW, LJ, threaded, spectacle, LWN" },
+  { slug: "forgings", name: "Forgings", code: "FG", desc: "Open-die, closed-die, custom forgings, rings & discs" },
+  { slug: "bars", name: "Bars", code: "BR", desc: "Round, square, rectangular, flat, hex" },
+  { slug: "sections", name: "Sections", code: "SE", desc: "SHS, RHS, CHS, H-beam, I-beam, angles, channels" },
+  { slug: "fasteners", name: "Fasteners", code: "FA", desc: "Stud bolts, hex bolts, nuts, washers, anchor & U-bolts (HDG / PTFE / Zinc-flake)" },
+  { slug: "valves", name: "Valves", code: "VL", desc: "Gate, globe, check, ball, butterfly" },
+  { slug: "spools", name: "Spools & Pre-Fab", code: "SP", desc: "Pipe spools, manifolds, headers — shop-fabricated" },
+];
+
+// Material GRADES (cross-cutting filter — every product can come in many of these)
+export const ALL_GRADES = [
+  "Carbon Steel (A106 / A53 / API 5L)",
+  "Low-Temp CS (A333 / A350 LF2)",
+  "Alloy Steel (A335 P-grades / A182 F-grades)",
+  "Stainless Steel 304 / 304L",
+  "Stainless Steel 316 / 316L",
+  "Stainless Steel 321 / 321H",
+  "Stainless Steel 347 / 347H",
+  "Stainless Steel 904L",
+  "Duplex 2205 (S32205 / S31803)",
+  "Lean Duplex 2101 (S32101)",
+  "Super Duplex 2507 (S32750 / S32760)",
+  "Inconel 600 / 625 / 718",
+  "Incoloy 800H / 825",
+  "Hastelloy C-276 / C-22",
+  "Monel 400 / K-500",
+  "Alloy 20",
+  "Titanium Gr 2 / Gr 5",
 ];
 
 export const INDUSTRIES = [
@@ -23,7 +48,7 @@ export const SERVICES = [
   {
     code: "SVC-01",
     title: "Material Sourcing",
-    summary: "One-stop supply across CS, SS, Duplex, Nickel & Titanium.",
+    summary: "One-stop supply across pipes, fittings, flanges, fasteners, sections.",
     bullets: [
       "Flexible sourcing from China, India & Europe",
       "Approved manufacturer network",
@@ -33,17 +58,29 @@ export const SERVICES = [
   },
   {
     code: "SVC-02",
-    title: "Contract Manufacturing",
+    title: "Contract Manufacturing & Custom Forgings",
     summary: "Partnered fabrication, machining and forging capacity.",
     bullets: [
-      "Custom forgings & fabrications",
+      "Custom open- and closed-die forgings",
       "BW & forged fittings on demand",
       "Drawing & BOM-driven supply",
-      "Single-source project delivery",
+      "Pre-fab pipe spools — pipe + flanges welded",
     ],
   },
   {
     code: "SVC-03",
+    title: "Coatings — 3LPP, FBE, DFBE & Internal Epoxy",
+    summary: "Anti-corrosion coatings for buried & sour-service pipelines.",
+    bullets: [
+      "3LPP three-layer polypropylene (DIN 30670)",
+      "FBE fusion-bonded epoxy (AWWA C213)",
+      "DFBE dual-layer FBE for abrasion resistance",
+      "Internal flow-coat epoxy",
+      "Fastener coatings: HDG, PTFE/Xylan, Zinc Flake (Geomet/Dacromet)",
+    ],
+  },
+  {
+    code: "SVC-04",
     title: "Quality, Testing & Inspection",
     summary: "Independent verification and full traceability.",
     bullets: [
@@ -55,7 +92,7 @@ export const SERVICES = [
     ],
   },
   {
-    code: "SVC-04",
+    code: "SVC-05",
     title: "Logistics & Project Supply",
     summary: "Engineered packing for global, project-grade delivery.",
     bullets: [
@@ -68,7 +105,7 @@ export const SERVICES = [
 ];
 
 export const STANDARDS = [
-  "ASTM", "ASME", "EN", "DIN", "AS-NZ", "SANS", "ISO",
+  "ASTM", "ASME", "API", "EN", "DIN", "AS-NZ", "ISO", "MSS-SP",
 ];
 
 export const COMPLIANCE_HIGHLIGHTS = [

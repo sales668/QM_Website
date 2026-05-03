@@ -60,14 +60,18 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-3">
-            <div className="qm-tick text-gray-500 mb-4">Materials</div>
+            <div className="qm-tick text-gray-500 mb-4">Products</div>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/products/carbon-steel" className="hover:text-[#FF3B30]">Carbon Steel</Link></li>
-              <li><Link to="/products/stainless-steel" className="hover:text-[#FF3B30]">Stainless Steel</Link></li>
-              <li><Link to="/products/duplex" className="hover:text-[#FF3B30]">Duplex & Super Duplex</Link></li>
-              <li><Link to="/products/high-nickel-alloys" className="hover:text-[#FF3B30]">High Nickel Alloys</Link></li>
-              <li><Link to="/products/titanium" className="hover:text-[#FF3B30]">Titanium</Link></li>
+              <li><Link to="/products/pipes" className="hover:text-[#FF3B30]">Pipes (incl. 3LPP / FBE / DFBE)</Link></li>
+              <li><Link to="/products/bw-fittings" className="hover:text-[#FF3B30]">BW Fittings</Link></li>
+              <li><Link to="/products/forged-fittings" className="hover:text-[#FF3B30]">Forged Fittings</Link></li>
+              <li><Link to="/products/flanges" className="hover:text-[#FF3B30]">Flanges</Link></li>
+              <li><Link to="/products/forgings" className="hover:text-[#FF3B30]">Forgings & Custom</Link></li>
+              <li><Link to="/products/bars" className="hover:text-[#FF3B30]">Bars</Link></li>
+              <li><Link to="/products/sections" className="hover:text-[#FF3B30]">Sections (SHS / RHS / H-beam)</Link></li>
               <li><Link to="/products/fasteners" className="hover:text-[#FF3B30]">Fasteners</Link></li>
+              <li><Link to="/products/valves" className="hover:text-[#FF3B30]">Valves</Link></li>
+              <li><Link to="/products/spools" className="hover:text-[#FF3B30]">Spools & Pre-Fab</Link></li>
             </ul>
           </div>
 

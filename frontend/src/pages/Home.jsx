@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, CheckCircle, Certificate, Microscope, Truck, Compass } from "@phosphor-icons/react";
 import { api } from "../lib/api";
-import { CATEGORIES, INDUSTRIES, STANDARDS } from "../lib/staticData";
+import { CATEGORIES, INDUSTRIES, STANDARDS, ALL_GRADES } from "../lib/staticData";
 
 const PIPES_IMG =
   "https://images.pexels.com/photos/19730402/pexels-photo-19730402.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1300";
@@ -17,7 +17,7 @@ export default function Home() {
 
   useEffect(() => {
     api.get("/products", { params: { featured: true } })
-      .then((r) => setFeatured(r.data.slice(0, 6)))
+      .then((r) => setFeatured(r.data.slice(0, 8)))
       .catch(() => setFeatured([]));
   }, []);
 
@@ -61,12 +61,12 @@ export default function Home() {
 
               <dl className="mt-16 grid grid-cols-3 max-w-2xl border-t border-gray-200">
                 <div className="border-r border-gray-200 py-5">
-                  <dt className="qm-tick">Materials</dt>
-                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">CS · SS · DSS<br/>Ni · Ti · Fasteners</dd>
+                  <dt className="qm-tick">Products</dt>
+                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">Pipes · Fittings<br/>Flanges · Forgings<br/>Fasteners · Valves</dd>
                 </div>
                 <div className="border-r border-gray-200 py-5 pl-5">
                   <dt className="qm-tick">Standards</dt>
-                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">ASTM · ASME · EN<br/>DIN · AS-NZ · ISO</dd>
+                  <dd className="font-mono-spec text-sm sm:text-base font-semibold mt-2 text-[#0B1120] leading-snug">ASTM · ASME · API<br/>EN · DIN · AS-NZ · ISO</dd>
                 </div>
                 <div className="py-5 pl-5">
                   <dt className="qm-tick">Sourcing</dt>
@@ -116,36 +116,67 @@ export default function Home() {
         <div className="mx-auto max-w-[1400px] px-6 sm:px-12 lg:px-16 py-20 lg:py-28">
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
             <div>
-              <div className="qm-tick mb-3">// 02 / MATERIAL CATALOG</div>
+              <div className="qm-tick mb-3">// 02 / PRODUCT CATALOG</div>
               <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight max-w-2xl">
-                A spectrum of metals,<br />engineered to spec.
+                Pipes, fittings, flanges,<br />forgings & more.
               </h2>
+              <p className="mt-4 text-gray-600 max-w-xl text-sm">
+                Every product available across the full grade spectrum — Carbon, Stainless, Duplex, High-Nickel, Titanium.
+              </p>
             </div>
             <Link to="/products" className="text-sm font-semibold uppercase tracking-widest text-[#002FA7] hover:underline" data-testid="home-view-all-products">
               View Full Catalog →
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-l border-t border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border-l border-t border-gray-200">
             {CATEGORIES.map((c, idx) => (
               <Link
                 key={c.slug}
                 to={`/products/${c.slug}`}
                 data-testid={`home-category-${c.slug}`}
-                className="group border-r border-b border-gray-200 p-8 lg:p-10 bg-white hover:bg-[#0B1120] hover:text-white transition-colors duration-300 min-h-[220px] flex flex-col justify-between"
+                className="group border-r border-b border-gray-200 p-6 lg:p-7 bg-white hover:bg-[#0B1120] hover:text-white transition-colors duration-300 min-h-[200px] flex flex-col justify-between"
               >
                 <div>
                   <div className="qm-tick text-gray-400 group-hover:text-gray-500">CAT-{String(idx + 1).padStart(2, "0")} / {c.code}</div>
-                  <div className="font-display text-2xl sm:text-[28px] font-black uppercase tracking-tight mt-3 leading-tight">
+                  <div className="font-display text-xl sm:text-2xl font-black uppercase tracking-tight mt-3 leading-tight">
                     {c.name}
                   </div>
+                  <div className="text-[12px] text-gray-500 group-hover:text-gray-300 mt-2 leading-snug">{c.desc}</div>
                 </div>
-                <div className="flex items-center justify-between mt-6">
-                  <span className="text-xs uppercase tracking-widest font-semibold opacity-60 group-hover:opacity-100">Explore →</span>
-                  <ArrowUpRight size={22} weight="bold" className="opacity-50 group-hover:opacity-100 transition-opacity" />
+                <div className="flex items-center justify-between mt-5">
+                  <span className="text-[11px] uppercase tracking-widest font-semibold opacity-60 group-hover:opacity-100">Explore</span>
+                  <ArrowUpRight size={18} weight="bold" className="opacity-50 group-hover:opacity-100 transition-opacity" />
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* GRADES STRIP */}
+      <section className="border-b border-gray-200 bg-[#0B1120] text-white">
+        <div className="mx-auto max-w-[1400px] px-6 sm:px-12 lg:px-16 py-16 lg:py-20">
+          <div className="grid lg:grid-cols-12 gap-10 items-start">
+            <div className="lg:col-span-4">
+              <div className="qm-tick text-gray-500 mb-3">// 02·5 / GRADE SPECTRUM</div>
+              <h2 className="font-display text-3xl sm:text-4xl font-black uppercase tracking-tight">
+                Every product.<br /> Every grade.
+              </h2>
+              <p className="mt-4 text-sm text-gray-400 leading-relaxed max-w-sm">
+                Pipes, fittings, flanges, fasteners, sections — sourced in any of the grades below, and many more on request.
+              </p>
+            </div>
+            <div className="lg:col-span-8 flex flex-wrap gap-2">
+              {ALL_GRADES.map((g) => (
+                <span key={g} className="font-mono-spec text-[11px] tracking-wide border border-white/15 bg-white/5 px-3 py-2 text-gray-200">
+                  {g}
+                </span>
+              ))}
+              <span className="font-mono-spec text-[11px] tracking-wide bg-[#FF3B30] text-white px-3 py-2">
+                + many more on request
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -154,17 +185,17 @@ export default function Home() {
       {featured.length > 0 && (
         <section className="border-b border-gray-200 bg-[#FAFAFA]">
           <div className="mx-auto max-w-[1400px] px-6 sm:px-12 lg:px-16 py-20 lg:py-28">
-            <div className="qm-tick mb-3">// 03 / FEATURED GRADES</div>
+            <div className="qm-tick mb-3">// 03 / FEATURED PRODUCTS</div>
             <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-tight mb-12 max-w-3xl">
-              Critical-service alloys<br /> we ship every week.
+              Critical-service items<br /> we ship every week.
             </h2>
             <div className="bg-white border border-gray-200 overflow-x-auto">
               <table className="w-full text-left text-sm" data-testid="featured-products-table">
                 <thead className="bg-[#0B1120] text-white font-mono-spec text-[11px] uppercase tracking-widest">
                   <tr>
-                    <th className="px-6 py-4">Grade</th>
+                    <th className="px-6 py-4">Product</th>
                     <th className="px-6 py-4">Category</th>
-                    <th className="px-6 py-4 hidden md:table-cell">Forms</th>
+                    <th className="px-6 py-4 hidden md:table-cell">Sizes</th>
                     <th className="px-6 py-4 hidden lg:table-cell">Standards</th>
                     <th className="px-6 py-4 text-right">Action</th>
                   </tr>
@@ -174,13 +205,13 @@ export default function Home() {
                     <tr key={p.id} className="qm-spec-row hover:bg-gray-50" data-testid={`featured-row-${p.id}`}>
                       <td className="px-6 py-5">
                         <div className="font-display text-base font-bold text-[#0B1120]">{p.name}</div>
-                        <div className="font-mono-spec text-[11px] text-[#002FA7] mt-1">{p.grade}</div>
+                        <div className="font-mono-spec text-[11px] text-[#002FA7] mt-1">{p.subtype || p.grade}</div>
                       </td>
                       <td className="px-6 py-5 text-gray-700">{p.category}</td>
-                      <td className="px-6 py-5 hidden md:table-cell text-gray-600 text-[13px]">{p.forms.slice(0, 3).join(", ")}{p.forms.length > 3 ? ", …" : ""}</td>
-                      <td className="px-6 py-5 hidden lg:table-cell font-mono-spec text-[11px] text-gray-500">{p.standards.join(" · ")}</td>
+                      <td className="px-6 py-5 hidden md:table-cell text-gray-600 text-[13px] font-mono-spec">{p.sizes || "—"}</td>
+                      <td className="px-6 py-5 hidden lg:table-cell font-mono-spec text-[11px] text-gray-500">{(p.standards || []).join(" · ")}</td>
                       <td className="px-6 py-5 text-right">
-                        <Link to={`/products/${p.category_slug}`} className="text-[#002FA7] font-semibold uppercase tracking-widest text-[11px] hover:underline">Datasheet →</Link>
+                        <Link to={`/products/${p.category_slug}`} className="text-[#002FA7] font-semibold uppercase tracking-widest text-[11px] hover:underline">View →</Link>
                       </td>
                     </tr>
                   ))}

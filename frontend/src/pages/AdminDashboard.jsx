@@ -121,14 +121,18 @@ function Overview() {
 }
 
 const blank = {
-  category: "Stainless Steel",
-  category_slug: "stainless-steel",
+  category: "Pipes",
+  category_slug: "pipes",
   name: "",
+  subtype: "",
   grade: "",
+  grades: "",
   standards: "",
+  sizes: "",
   forms: "",
   applications: "",
   description: "",
+  image_url: "",
   featured: false,
   sort_order: 100,
 };
@@ -150,6 +154,7 @@ function ProductsAdmin() {
   function startEdit(p) {
     setEditing({
       ...p,
+      grades: (p.grades || []).join(", "),
       standards: (p.standards || []).join(", "),
       forms: (p.forms || []).join(", "),
       applications: (p.applications || []).join(", "),
@@ -166,6 +171,7 @@ function ProductsAdmin() {
     e.preventDefault();
     const payload = {
       ...editing,
+      grades: editing.grades.split(",").map((s) => s.trim()).filter(Boolean),
       standards: editing.standards.split(",").map((s) => s.trim()).filter(Boolean),
       forms: editing.forms.split(",").map((s) => s.trim()).filter(Boolean),
       applications: editing.applications.split(",").map((s) => s.trim()).filter(Boolean),
@@ -200,12 +206,16 @@ function ProductsAdmin() {
       {showForm && editing && (
         <form onSubmit={save} className="border border-gray-200 bg-white p-6 mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4" data-testid="admin-product-form">
           <Inp label="Name" v={editing.name} onChange={(v) => setEditing({ ...editing, name: v })} required />
-          <Inp label="Grade" v={editing.grade} onChange={(v) => setEditing({ ...editing, grade: v })} required />
-          <Inp label="Category" v={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required />
-          <Inp label="Category Slug" v={editing.category_slug} onChange={(v) => setEditing({ ...editing, category_slug: v })} required />
+          <Inp label="Subtype (e.g. 90° LR Elbow)" v={editing.subtype} onChange={(v) => setEditing({ ...editing, subtype: v })} />
+          <Inp label="Category (e.g. Pipes)" v={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} required />
+          <Inp label="Category Slug (e.g. pipes)" v={editing.category_slug} onChange={(v) => setEditing({ ...editing, category_slug: v })} required />
+          <Inp label="Headline Grade Label" v={editing.grade} onChange={(v) => setEditing({ ...editing, grade: v })} />
+          <Inp label="Sizes (e.g. 1/2&quot; – 24&quot; NPS)" v={editing.sizes} onChange={(v) => setEditing({ ...editing, sizes: v })} />
+          <Inp label="Available Grades (comma-sep)" v={editing.grades} onChange={(v) => setEditing({ ...editing, grades: v })} full />
           <Inp label="Standards (comma-sep)" v={editing.standards} onChange={(v) => setEditing({ ...editing, standards: v })} />
           <Inp label="Forms (comma-sep)" v={editing.forms} onChange={(v) => setEditing({ ...editing, forms: v })} />
           <Inp label="Applications (comma-sep)" v={editing.applications} onChange={(v) => setEditing({ ...editing, applications: v })} full />
+          <Inp label="Image URL (paste any public image URL)" v={editing.image_url} onChange={(v) => setEditing({ ...editing, image_url: v })} full />
           <Inp label="Description" v={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} full textarea />
           <Inp label="Sort Order" type="number" v={editing.sort_order} onChange={(v) => setEditing({ ...editing, sort_order: v })} />
           <label className="flex items-center gap-3 mt-7 text-sm">
