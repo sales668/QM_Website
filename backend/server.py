@@ -147,8 +147,119 @@ class ProductUpdate(BaseModel):
     forms: Optional[List[str]] = None
     applications: Optional[List[str]] = None
     description: Optional[str] = None
+    image_url: Optional[str] = None
     featured: Optional[bool] = None
     sort_order: Optional[int] = None
+
+
+# ---------- CMS: Site Settings & Pages ----------
+class SiteSettings(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = "default"
+    site_name: str = "Quality Metals Limited"
+    site_short: str = "Quality Metals"
+    region_label: str = "Limited / NZ"
+    logo_text: str = "QM"
+    tagline: str = "Engineers don't like surprises. Neither do we."
+
+    # Brand
+    primary_color: str = "#002FA7"
+    accent_color: str = "#FF3B30"
+
+    # Contact
+    contact_email: str = "sales@qualitymetalsltd.com"
+    contact_phone: str = "+64 21 081 56475"
+    contact_whatsapp: str = "+64 21 081 56475"
+    contact_address: str = "New Zealand"
+    contact_website: str = "qualitymetalsltd.com"
+
+    # Hero (homepage)
+    hero_eyebrow: str = "// QM-001 / NEW ZEALAND / EST 2024"
+    hero_h1_line1: str = "Engineers don't"
+    hero_h1_line2: str = "like surprises."
+    hero_h1_line3: str = "Neither do we."
+    hero_subtitle: str = "A one-stop industrial steel & alloy supplier — Carbon, Stainless, Duplex, High-Nickel and Titanium — sourced from approved manufacturers, delivered with full traceability. New Zealand based, globally sourced."
+    hero_cta_primary: str = "Send your BOM"
+    hero_cta_secondary: str = "Browse Catalog"
+    hero_image_url: str = "/api/uploads/cat-pipes.jpg"
+
+    # Footer
+    footer_about: str = "A one-stop industrial steel and alloy supplier supporting critical industries with reliable, specification-compliant materials."
+    footer_cta_h1_line1: str = "Send your"
+    footer_cta_h1_line2: str = "BOM."
+    footer_cta_text: str = "Send us your BOM, drawings, or material list — we respond with a quick technical and commercial quotation. Engineers don't like surprises. Neither do we."
+
+    # SEO
+    seo_title: str = "Quality Metals Limited — Industrial Steel & Alloy Supplier (NZ)"
+    seo_description: str = "B2B industrial steel and alloy supplier — pipes, fittings, flanges, fasteners, valves, forgings. EN 10204 3.1/3.2, PMI, SGS/BV/TÜV inspection."
+
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+class SiteSettingsUpdate(BaseModel):
+    site_name: Optional[str] = None
+    site_short: Optional[str] = None
+    region_label: Optional[str] = None
+    logo_text: Optional[str] = None
+    tagline: Optional[str] = None
+    primary_color: Optional[str] = None
+    accent_color: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_whatsapp: Optional[str] = None
+    contact_address: Optional[str] = None
+    contact_website: Optional[str] = None
+    hero_eyebrow: Optional[str] = None
+    hero_h1_line1: Optional[str] = None
+    hero_h1_line2: Optional[str] = None
+    hero_h1_line3: Optional[str] = None
+    hero_subtitle: Optional[str] = None
+    hero_cta_primary: Optional[str] = None
+    hero_cta_secondary: Optional[str] = None
+    hero_image_url: Optional[str] = None
+    footer_about: Optional[str] = None
+    footer_cta_h1_line1: Optional[str] = None
+    footer_cta_h1_line2: Optional[str] = None
+    footer_cta_text: Optional[str] = None
+    seo_title: Optional[str] = None
+    seo_description: Optional[str] = None
+
+
+class Page(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    slug: str                     # url-safe, unique
+    title: str
+    subtitle: str = ""
+    body_markdown: str = ""
+    hero_image_url: str = ""
+    show_in_nav: bool = True
+    nav_order: int = 500
+    is_published: bool = True
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+class PageCreate(BaseModel):
+    slug: str
+    title: str
+    subtitle: str = ""
+    body_markdown: str = ""
+    hero_image_url: str = ""
+    show_in_nav: bool = True
+    nav_order: int = 500
+    is_published: bool = True
+
+
+class PageUpdate(BaseModel):
+    slug: Optional[str] = None
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+    body_markdown: Optional[str] = None
+    hero_image_url: Optional[str] = None
+    show_in_nav: Optional[bool] = None
+    nav_order: Optional[int] = None
+    is_published: Optional[bool] = None
 
 
 class Inquiry(BaseModel):
@@ -285,6 +396,119 @@ async def create_inquiry(payload: InquiryCreate):
     doc = obj.model_dump()
     await db.inquiries.insert_one(doc)
     return obj
+
+
+# ---------- CMS: Site Settings (public read; admin write) ----------
+@api.get("/site-settings", response_model=SiteSettings)
+async def get_site_settings():
+    doc = await db.site_settings.find_one({"id": "default"}, {"_id": 0})
+    if not doc:
+        # Auto-create default if missing
+        s = SiteSettings()
+        await db.site_settings.insert_one(s.model_dump())
+        doc = s.model_dump()
+    return doc
+
+
+@api.put("/site-settings", response_model=SiteSettings)
+async def update_site_settings(payload: SiteSettingsUpdate, admin=Depends(get_current_admin)):
+    updates = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.site_settings.update_one({"id": "default"}, {"$set": updates}, upsert=True)
+    doc = await db.site_settings.find_one({"id": "default"}, {"_id": 0})
+    return doc
+
+
+# ---------- CMS: Pages (public list/get; admin write) ----------
+@api.get("/pages", response_model=List[Page])
+async def list_pages(only_in_nav: Optional[bool] = None):
+    q: dict = {"is_published": True}
+    if only_in_nav is not None:
+        q["show_in_nav"] = only_in_nav
+    docs = await db.pages.find(q, {"_id": 0}).sort([("nav_order", 1), ("title", 1)]).to_list(length=200)
+    return docs
+
+
+@api.get("/pages/{slug}", response_model=Page)
+async def get_page_by_slug(slug: str):
+    doc = await db.pages.find_one({"slug": slug, "is_published": True}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return doc
+
+
+@api.get("/admin/pages", response_model=List[Page])
+async def admin_list_pages(admin=Depends(get_current_admin)):
+    docs = await db.pages.find({}, {"_id": 0}).sort([("nav_order", 1), ("title", 1)]).to_list(length=500)
+    return docs
+
+
+@api.post("/pages", response_model=Page)
+async def create_page(payload: PageCreate, admin=Depends(get_current_admin)):
+    slug = payload.slug.strip().lower().replace(" ", "-")
+    if not slug:
+        raise HTTPException(status_code=400, detail="Slug is required")
+    if await db.pages.find_one({"slug": slug}):
+        raise HTTPException(status_code=409, detail=f"A page with slug '{slug}' already exists")
+    p = Page(**{**payload.model_dump(), "slug": slug})
+    await db.pages.insert_one(p.model_dump())
+    return p
+
+
+@api.put("/pages/{page_id}", response_model=Page)
+async def update_page(page_id: str, payload: PageUpdate, admin=Depends(get_current_admin)):
+    updates = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    if "slug" in updates:
+        updates["slug"] = updates["slug"].strip().lower().replace(" ", "-")
+        clash = await db.pages.find_one({"slug": updates["slug"], "id": {"$ne": page_id}})
+        if clash:
+            raise HTTPException(status_code=409, detail=f"A page with slug '{updates['slug']}' already exists")
+    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.pages.update_one({"id": page_id}, {"$set": updates})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Page not found")
+    doc = await db.pages.find_one({"id": page_id}, {"_id": 0})
+    return doc
+
+
+@api.delete("/pages/{page_id}")
+async def delete_page(page_id: str, admin=Depends(get_current_admin)):
+    result = await db.pages.delete_one({"id": page_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return {"ok": True}
+
+
+# ---------- CMS: Media library (admin only) ----------
+@api.get("/admin/media")
+async def list_media(admin=Depends(get_current_admin)):
+    files = []
+    for p in sorted(UPLOAD_DIR.iterdir(), key=lambda x: x.stat().st_mtime, reverse=True):
+        if p.is_file() and ("." + p.suffix.lstrip(".").lower()) in ALLOWED_IMG_EXT:
+            stat = p.stat()
+            files.append({
+                "filename": p.name,
+                "url": f"/api/uploads/{p.name}",
+                "size": stat.st_size,
+                "modified": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+            })
+    return files
+
+
+@api.delete("/admin/media/{filename}")
+async def delete_media(filename: str, admin=Depends(get_current_admin)):
+    # prevent path traversal
+    if "/" in filename or "\\" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    fpath = UPLOAD_DIR / filename
+    if not fpath.exists() or not fpath.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    fpath.unlink()
+    return {"ok": True}
 
 
 # ---------- Admin Routes ----------
